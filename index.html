@@ -376,9 +376,20 @@
             <div class="form-group" style="margin-bottom: 20px;">
                 <input type="password" id="password" placeholder="Password" required style="width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px;">
             </div>
-            <button type="submit" class="btn-primary" style="width: 100%;">Login</button>
+            <button type="submit" class="btn-primary" style="width: 100%; margin-bottom: 15px;">Login</button>
+            <button type="button" onclick="testConnection()" class="btn-secondary" style="width: 100%;">🧪 Test Connection</button>
         </form>
         <div id="loginMessage"></div>
+        
+        <!-- Debug Panel -->
+        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; font-size: 12px;">
+            <strong>Debug Info:</strong><br>
+            <div id="debugInfo">
+                Script URL: <span id="debugScriptUrl" style="color: #007bff;"></span><br>
+                Status: <span id="debugStatus">Ready</span><br>
+                Browser: <span id="debugBrowser"></span>
+            </div>
+        </div>
     </div>
 
     <!-- Admin Portal -->
@@ -390,6 +401,7 @@
             </div>
             <div>
                 <span id="adminUsername" style="margin-right: 20px;"></span>
+                <button onclick="testConnection()" class="btn-primary" style="margin-right: 10px;">🧪 Test Connection</button>
                 <button onclick="logout()" class="btn-danger">Logout</button>
             </div>
         </div>
@@ -535,8 +547,26 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Logging in...';
+            submitBtn.disabled = true;
+            
+            // Clear previous messages
+            clearMessage('loginMessage');
+            
+            console.log('Attempting login with username:', username);
+            console.log('Script URL:', SCRIPT_URL);
+            
             try {
-                const result = await makeRequest('adminLogin', { username, password });
+                // Check if SCRIPT_URL is configured
+                if (SCRIPT_URL.includes('YOUR_STANDALONE_ADMIN_SCRIPT_ID')) {
+                    throw new Error('Please update SCRIPT_URL with your actual Google Apps Script URL');
+                }
+                
+                const result = await makeRequest('login', { username, password });
+                console.log('Login response:', result);
                 
                 if (result.success) {
                     sessionToken = result.data.sessionToken;
@@ -548,10 +578,14 @@
                     loadDashboard();
                     loadRecentMeetings();
                 } else {
-                    showMessage('loginMessage', result.message, 'error');
+                    showMessage('loginMessage', result.error || result.message || 'Login failed', 'error');
                 }
             } catch (error) {
+                console.error('Login error:', error);
                 showMessage('loginMessage', 'Login failed: ' + error.message, 'error');
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             }
         });
 
@@ -881,26 +915,49 @@
 
         // Utility functions
         async function makeRequest(action, data) {
-            const formData = new FormData();
-            formData.append('action', action);
-            formData.append('data', JSON.stringify(data));
-            
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: formData
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            
-            const text = await response.text();
+            console.log('Making request:', action, data);
             
             try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('Raw response:', text);
-                throw new Error('Invalid JSON response from server');
+                const formData = new FormData();
+                formData.append('action', action);
+                formData.append('data', JSON.stringify(data));
+                
+                console.log('Sending to URL:', SCRIPT_URL);
+                
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+                }
+                
+                const text = await response.text();
+                console.log('Raw response text:', text);
+                
+                // Check if response is HTML (error page)
+                if (text.trim().startsWith('<')) {
+                    console.error('Received HTML response instead of JSON:', text.substring(0, 200));
+                    throw new Error('Server returned HTML instead of JSON. Check your script URL and deployment settings.');
+                }
+                
+                try {
+                    const result = JSON.parse(text);
+                    console.log('Parsed JSON result:', result);
+                    return result;
+                } catch (parseError) {
+                    console.error('JSON parse error:', parseError);
+                    console.error('Response text:', text);
+                    throw new Error('Invalid JSON response from server: ' + text.substring(0, 100) + '...');
+                }
+                
+            } catch (fetchError) {
+                console.error('Fetch error:', fetchError);
+                throw new Error('Network error: ' + fetchError.message);
             }
         }
 
@@ -967,6 +1024,19 @@
                 loadDashboard();
             }
         }, 300000);
+
+        // Initialize debug info on page load
+        window.addEventListener('load', () => {
+            document.getElementById('debugScriptUrl').textContent = SCRIPT_URL;
+            document.getElementById('debugBrowser').textContent = navigator.userAgent;
+            
+            // Check if script URL is configured
+            if (SCRIPT_URL.includes('YOUR_STANDALONE_ADMIN_SCRIPT_ID')) {
+                document.getElementById('debugStatus').innerHTML = '<span style="color: red;">❌ Script URL not configured</span>';
+            } else {
+                document.getElementById('debugStatus').innerHTML = '<span style="color: green;">✅ Script URL configured</span>';
+            }
+        });
     </script>
 </body>
 </html>
