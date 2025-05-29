@@ -3,140 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meeting Notes Admin Portal</title>
+    <title>Admin Portal</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
             min-height: 100vh;
-            color: #333;
         }
 
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            z-index: 9999;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #fff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            font-size: 18px;
-            margin-bottom: 10px;
-        }
-
-        .loading-status {
-            font-size: 14px;
-            opacity: 0.8;
-            text-align: center;
-            max-width: 400px;
-        }
-
-        .auth-error {
-            background: #e74c3c;
+        .header {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
             color: white;
             padding: 20px;
             border-radius: 10px;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .retry-btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 15px;
-            font-size: 14px;
-        }
-
-        .retry-btn:hover {
-            background: #2980b9;
-        }
-
-        .main-content {
-            display: none;
-        }
-
-        /* All your existing admin portal styles here... */
-        .admin-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .admin-header {
-            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 15px;
             margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3);
             position: relative;
         }
 
-        .admin-header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .admin-header p {
-            font-size: 1.2em;
-            opacity: 0.9;
+        .header h1 {
+            margin: 0;
+            font-size: 2em;
         }
 
         .logout-btn {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: none;
             padding: 8px 16px;
-            border-radius: 8px;
+            border-radius: 5px;
             cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
         }
 
         .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(255,255,255,0.3);
         }
 
-        .stats-grid {
+        .welcome {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
@@ -144,21 +68,15 @@
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: #f8f9fa;
             padding: 20px;
-            border-radius: 15px;
+            border-radius: 10px;
             text-align: center;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #e74c3c;
         }
 
         .stat-number {
-            font-size: 2.5em;
+            font-size: 2em;
             font-weight: bold;
             color: #e74c3c;
             margin-bottom: 5px;
@@ -166,69 +84,125 @@
 
         .stat-label {
             color: #666;
-            font-weight: 600;
         }
 
-        .welcome-message {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
         }
 
-        .welcome-message h2 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-        }
-
-        .welcome-message p {
-            color: #666;
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
             font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+
+        .debug {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
         }
 
         @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .admin-header h1 {
-                font-size: 2em;
+            .header h1 {
+                font-size: 1.5em;
             }
             
             .logout-btn {
                 position: static;
-                margin-top: 20px;
+                margin-top: 15px;
                 display: block;
-                width: fit-content;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loading-spinner"></div>
-        <div class="loading-text" id="loadingText">Checking Authentication...</div>
-        <div class="loading-status" id="loadingStatus">Please wait while we verify your session</div>
-    </div>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Admin Portal</h1>
+            <p>Meeting Notes Management Dashboard</p>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        </div>
 
-    <!-- Main Content (Hidden Initially) -->
-    <div class="main-content" id="mainContent">
-        <div class="admin-container">
-            <div class="admin-header">
-                <h1>🔧 Admin Portal</h1>
-                <p>Meeting Notes Management & Analytics Dashboard</p>
-                <button class="logout-btn" onclick="logout()">🚪 Logout</button>
-            </div>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Loading admin portal...</p>
+        </div>
 
-            <div class="welcome-message">
+        <div class="error" id="error">
+            <h3>Authentication Error</h3>
+            <p id="errorMessage">Please login again</p>
+            <button class="btn btn-primary" onclick="goToLogin()" style="margin-top: 15px;">Go to Login</button>
+        </div>
+
+        <div id="mainContent" style="display: none;">
+            <div class="welcome">
                 <h2>Welcome to the Admin Portal!</h2>
-                <p>Successfully authenticated. Loading your meeting notes data...</p>
+                <p id="welcomeMessage">Successfully authenticated</p>
             </div>
 
-            <div class="stats-grid">
+            <div class="stats">
                 <div class="stat-card">
                     <div class="stat-number" id="totalMeetings">0</div>
                     <div class="stat-label">Total Meetings</div>
@@ -242,80 +216,72 @@
                     <div class="stat-label">Unique Attendees</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="avgDuration">0</div>
+                    <div class="stat-number" id="avgLength">0</div>
                     <div class="stat-label">Avg Notes Length</div>
                 </div>
             </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="loadMeetingData()">📊 Load Meeting Data</button>
+                <button class="btn btn-secondary" onclick="refreshStats()">🔄 Refresh Stats</button>
+                <button class="btn btn-primary" onclick="exportData()">📤 Export Data</button>
+                <button class="btn btn-secondary" onclick="showDebug()">🔍 Show Debug</button>
+            </div>
+        </div>
+
+        <div class="debug" id="debugInfo" style="display: none;">
+            <h4>Debug Information:</h4>
+            <div id="debugContent">Loading debug info...</div>
         </div>
     </div>
 
     <script>
-        // Global variables
-        let sessionToken = null;
-        let currentUser = null;
-
-        // Google Apps Script Web App URL - Replace with your admin script URL
+        // Configuration
         const ADMIN_SCRIPT_URL = 'https://script.google.com/macros/s/YOUR_ADMIN_SCRIPT_ID/exec';
+        let sessionToken = null;
+        let debugMode = false;
 
-        // Initialize with proper timing
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('=== ADMIN PORTAL STARTING ===');
-            
-            // Add small delay to ensure localStorage is ready
-            setTimeout(() => {
-                initializePortal();
-            }, 500);
+            console.log('Admin portal starting...');
+            initializePortal();
         });
 
-        async function initializePortal() {
-            try {
-                updateLoadingStatus('Checking authentication...');
-                
-                // Step 1: Check for session token with retry logic
-                sessionToken = localStorage.getItem('admin_session_token');
-                console.log('Session token found:', sessionToken ? 'Yes' : 'No');
-                
-                if (!sessionToken) {
-                    // Check for remember token
-                    const rememberToken = localStorage.getItem('admin_remember_token');
-                    if (rememberToken) {
-                        updateLoadingStatus('Found remember token, validating...');
-                        const remembered = await validateRememberToken(rememberToken);
-                        if (remembered) {
-                            sessionToken = remembered.sessionToken;
-                        }
-                    }
-                }
+        function initializePortal() {
+            console.log('Initializing portal...');
+            
+            // Show loading
+            showLoading(true);
+            
+            // Wait a moment then check auth
+            setTimeout(checkAuthentication, 1000);
+        }
 
-                if (!sessionToken) {
-                    showAuthError('No valid session found. Please login again.');
-                    return;
-                }
-
-                // Step 2: Validate session with backend
-                updateLoadingStatus('Validating session with server...');
-                const isValid = await validateSession();
-                
-                if (!isValid) {
-                    showAuthError('Session expired. Please login again.');
-                    return;
-                }
-
-                // Step 3: Load portal content
-                updateLoadingStatus('Loading admin portal...');
-                await loadPortalContent();
-                
-                // Step 4: Show main content
-                showMainContent();
-                
-            } catch (error) {
-                console.error('Portal initialization error:', error);
-                showAuthError('Failed to initialize portal: ' + error.message);
+        function checkAuthentication() {
+            console.log('Checking authentication...');
+            
+            // Get session token
+            sessionToken = localStorage.getItem('admin_session_token');
+            console.log('Session token:', sessionToken ? 'Found' : 'Not found');
+            
+            if (!sessionToken) {
+                showError('No session token found. Please login.');
+                return;
             }
+            
+            // Validate session
+            validateSession();
         }
 
         async function validateSession() {
             try {
+                console.log('Validating session...');
+                
+                if (ADMIN_SCRIPT_URL.includes('YOUR_ADMIN_SCRIPT_ID')) {
+                    showError('Admin script URL not configured. Please update ADMIN_SCRIPT_URL in the HTML.');
+                    return;
+                }
+                
                 const response = await fetch(ADMIN_SCRIPT_URL, {
                     method: 'POST',
                     body: new URLSearchParams({
@@ -323,112 +289,174 @@
                         token: sessionToken
                     })
                 });
-
+                
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
-
-                const result = await response.json();
-                console.log('Session validation result:', result);
+                
+                const text = await response.text();
+                console.log('Validation response:', text.substring(0, 100) + '...');
+                
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    throw new Error('Invalid JSON response: ' + text.substring(0, 100));
+                }
                 
                 if (result.success) {
-                    currentUser = result.data?.username || 'Admin';
-                    return true;
+                    console.log('Session valid!');
+                    showMainContent(result.data?.username || 'Admin');
+                } else {
+                    console.log('Session invalid:', result.message);
+                    showError('Session expired: ' + result.message);
                 }
-                
-                return false;
                 
             } catch (error) {
                 console.error('Session validation error:', error);
-                return false;
+                showError('Validation failed: ' + error.message);
             }
         }
 
-        async function validateRememberToken(rememberToken) {
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'none';
+        }
+
+        function showError(message) {
+            console.error('Showing error:', message);
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        function showMainContent(username) {
+            console.log('Showing main content for:', username);
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            
+            document.getElementById('welcomeMessage').textContent = `Welcome back, ${username}!`;
+            
+            // Load some basic stats
+            loadBasicStats();
+        }
+
+        function loadBasicStats() {
+            // Placeholder stats
+            document.getElementById('totalMeetings').textContent = '12';
+            document.getElementById('thisMonth').textContent = '3';
+            document.getElementById('totalAttendees').textContent = '8';
+            document.getElementById('avgLength').textContent = '245';
+        }
+
+        async function loadMeetingData() {
+            console.log('Loading meeting data...');
+            
             try {
                 const response = await fetch(ADMIN_SCRIPT_URL, {
                     method: 'POST',
                     body: new URLSearchParams({
-                        action: 'validateRememberToken',
-                        token: rememberToken
+                        action: 'getAllMeetings',
+                        sessionToken: sessionToken
                     })
                 });
-
+                
                 const result = await response.json();
                 
-                if (result.success && result.data?.sessionToken) {
-                    // Store new session token
-                    localStorage.setItem('admin_session_token', result.data.sessionToken);
-                    return result.data;
+                if (result.success) {
+                    alert(`Found ${result.data?.length || 0} meetings!`);
+                    updateStats(result.data || []);
+                } else {
+                    alert('Failed to load data: ' + result.message);
                 }
                 
-                return null;
-                
             } catch (error) {
-                console.error('Remember token validation error:', error);
-                return null;
+                console.error('Load error:', error);
+                alert('Load error: ' + error.message);
             }
         }
 
-        async function loadPortalContent() {
-            // Simulate loading (replace with actual data loading)
-            await new Promise(resolve => setTimeout(resolve, 1000));
+        function updateStats(meetings) {
+            document.getElementById('totalMeetings').textContent = meetings.length;
             
-            // Update stats with placeholder data
-            document.getElementById('totalMeetings').textContent = '12';
-            document.getElementById('thisMonth').textContent = '3';
-            document.getElementById('totalAttendees').textContent = '8';
-            document.getElementById('avgDuration').textContent = '245';
-        }
-
-        function showMainContent() {
-            document.getElementById('loadingScreen').style.display = 'none';
-            document.getElementById('mainContent').style.display = 'block';
-            console.log('Admin portal loaded successfully');
-        }
-
-        function updateLoadingStatus(message) {
-            console.log('Loading status:', message);
-            document.getElementById('loadingStatus').textContent = message;
-        }
-
-        function showAuthError(message) {
-            console.error('Auth error:', message);
+            const thisMonth = meetings.filter(m => {
+                const date = new Date(m.dateTime || m.date);
+                const now = new Date();
+                return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+            }).length;
             
-            const loadingScreen = document.getElementById('loadingScreen');
-            loadingScreen.innerHTML = `
-                <div class="auth-error">
-                    <h3>Authentication Error</h3>
-                    <p>${message}</p>
-                    <button class="retry-btn" onclick="retryAuth()">Retry</button>
-                    <button class="retry-btn" onclick="goToLogin()">Go to Login</button>
-                </div>
+            document.getElementById('thisMonth').textContent = thisMonth;
+            
+            const attendees = new Set();
+            meetings.forEach(m => {
+                if (m.attendees) {
+                    m.attendees.forEach(a => attendees.add(a));
+                }
+            });
+            
+            document.getElementById('totalAttendees').textContent = attendees.size;
+            
+            const avgLength = meetings.length > 0 ? 
+                Math.round(meetings.reduce((sum, m) => sum + (m.notes || '').length, 0) / meetings.length) : 0;
+            
+            document.getElementById('avgLength').textContent = avgLength;
+        }
+
+        function refreshStats() {
+            loadBasicStats();
+            alert('Stats refreshed!');
+        }
+
+        function exportData() {
+            alert('Export functionality coming soon!');
+        }
+
+        function showDebug() {
+            debugMode = !debugMode;
+            const debugDiv = document.getElementById('debugInfo');
+            
+            if (debugMode) {
+                debugDiv.style.display = 'block';
+                updateDebugInfo();
+            } else {
+                debugDiv.style.display = 'none';
+            }
+        }
+
+        function updateDebugInfo() {
+            const debugContent = document.getElementById('debugContent');
+            debugContent.innerHTML = `
+                <strong>Session Token:</strong> ${sessionToken ? sessionToken.substring(0, 20) + '...' : 'None'}<br>
+                <strong>Script URL:</strong> ${ADMIN_SCRIPT_URL}<br>
+                <strong>LocalStorage:</strong> ${Object.keys(localStorage).join(', ')}<br>
+                <strong>User Agent:</strong> ${navigator.userAgent}<br>
+                <strong>Current Time:</strong> ${new Date().toISOString()}<br>
+                <strong>Page URL:</strong> ${window.location.href}
             `;
-        }
-
-        function retryAuth() {
-            location.reload();
-        }
-
-        function goToLogin() {
-            // Clear tokens and redirect
-            localStorage.removeItem('admin_session_token');
-            localStorage.removeItem('admin_remember_token');
-            window.location.href = 'index.html';
         }
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
+                console.log('Logging out...');
                 localStorage.removeItem('admin_session_token');
                 localStorage.removeItem('admin_remember_token');
                 window.location.href = 'index.html';
             }
         }
 
-        // Prevent back button issues
+        function goToLogin() {
+            localStorage.removeItem('admin_session_token');
+            localStorage.removeItem('admin_remember_token');
+            window.location.href = 'index.html';
+        }
+
+        // Handle back button
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
-                // Page was loaded from cache, reinitialize
+                console.log('Page loaded from cache, reinitializing...');
                 initializePortal();
             }
         });
