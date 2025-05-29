@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meeting Notes Admin Portal</title>
+    <title>Meeting Notes Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,1028 +16,166 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            color: #333;
         }
 
         .login-container {
-            max-width: 400px;
-            margin: 100px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-box {
             background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            padding: 40px;
+            width: 100%;
+            max-width: 400px;
             text-align: center;
         }
 
-        .admin-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            display: none;
+        .login-box h1 {
+            color: #4facfe;
+            margin-bottom: 30px;
+            font-size: 2em;
         }
 
-        .admin-header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .login-box .form-group {
+            margin-bottom: 20px;
+            text-align: left;
         }
 
-        .admin-nav {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            padding: 20px 30px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .nav-btn {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(116, 185, 255, 0.3);
-        }
-
-        .nav-btn:hover, .nav-btn.active {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(116, 185, 255, 0.5);
-            background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%);
-        }
-
-        .admin-content {
-            padding: 30px;
-        }
-
-        .section {
-            display: none;
-        }
-
-        .section.active {
+        .login-box label {
             display: block;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #2d3436;
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            font-size: 1.1em;
-            color: #636e72;
+            margin-bottom: 8px;
             font-weight: 600;
+            color: #333;
         }
 
-        .search-panel {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-        }
-
-        .search-form {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 15px;
-            align-items: end;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #2d3436;
-        }
-
-        .form-group input, .form-group select {
+        .login-box input {
+            width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
             font-size: 16px;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
-        .form-group input:focus, .form-group select:focus {
+        .login-box input:focus {
             outline: none;
             border-color: #4facfe;
             box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.2);
         }
 
-        .btn-primary {
+        .btn-login {
+            width: 100%;
             background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
             color: white;
             border: none;
-            padding: 15px 25px;
-            border-radius: 12px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
+        .btn-login:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 184, 148, 0.4);
         }
 
-        .btn-danger {
-            background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(225, 112, 85, 0.4);
-        }
-
-        .btn-edit {
-            background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-edit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(253, 203, 110, 0.4);
-        }
-
-        .meetings-table {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .table-header {
-            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-            color: white;
-            padding: 15px;
-            font-weight: 600;
-        }
-
-        .table-row {
-            padding: 15px;
-            border-bottom: 1px solid #e0e0e0;
-            display: grid;
-            grid-template-columns: 2fr 1.5fr 1fr 1fr auto;
-            gap: 15px;
-            align-items: center;
-            transition: background-color 0.3s ease;
-        }
-
-        .table-row:hover {
-            background-color: #f8f9fa;
-        }
-
-        .meeting-title {
-            font-weight: 600;
-            color: #2d3436;
-        }
-
-        .meeting-meta {
-            color: #636e72;
-            font-size: 0.9em;
-        }
-
-        .meeting-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .modal {
+        .admin-container {
             display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
-        .modal-content {
-            background: white;
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .modal-header {
+        .admin-header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e0e0e0;
         }
 
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+        .admin-header h1 {
+            color: #4facfe;
+            font-size: 2em;
+        }
+
+        .admin-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
-        }
-
-        .close:hover {
-            color: #d63031;
-        }
-
-        .edit-form {
-            display: grid;
-            gap: 20px;
-        }
-
-        .edit-form textarea {
-            min-height: 300px;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            resize: vertical;
-        }
-
-        .success-message, .error-message {
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
             font-weight: 600;
-            text-align: center;
+            transition: all 0.3s ease;
         }
 
-        .success-message {
-            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(253, 121, 168, 0.4);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        .dashboard-main {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
             color: white;
-        }
-
-        .error-message {
-            background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
-            color: white;
-        }
-
-        .loading {
+            padding: 20px;
+            border-radius: 12px;
             text-align: center;
-            padding: 40px;
-            color: #636e72;
+            box-shadow: 0 5px 15px rgba(116, 185, 255, 0.3);
         }
 
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #4facfe;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+        .stat-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 768px) {
-            .search-form {
-                grid-template-columns: 1fr;
-            }
-            
-            .table-row {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Login Form -->
-    <div id="loginContainer" class="login-container">
-        <h1 style="margin-bottom: 30px; color: #2d3436;">🔐 Admin Portal</h1>
-        <form id="loginForm">
-            <div class="form-group" style="margin-bottom: 20px;">
-                <input type="text" id="username" placeholder="Username" required style="width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px;">
-            </div>
-            <div class="form-group" style="margin-bottom: 20px;">
-                <input type="password" id="password" placeholder="Password" required style="width: 100%; padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px;">
-            </div>
-            <button type="submit" class="btn-primary" style="width: 100%; margin-bottom: 15px;">Login</button>
-            <button type="button" onclick="testConnection()" class="btn-secondary" style="width: 100%;">🧪 Test Connection</button>
-        </form>
-        <div id="loginMessage"></div>
-        
-        <!-- Debug Panel -->
-        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; font-size: 12px;">
-            <strong>Debug Info:</strong><br>
-            <div id="debugInfo">
-                Script URL: <span id="debugScriptUrl" style="color: #007bff;"></span><br>
-                Status: <span id="debugStatus">Ready</span><br>
-                Browser: <span id="debugBrowser"></span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Portal -->
-    <div id="adminContainer" class="admin-container">
-        <div class="admin-header">
-            <div>
-                <h1>📋 Meeting Notes Admin Portal</h1>
-                <p>Manage and organize meeting documentation</p>
-            </div>
-            <div>
-                <span id="adminUsername" style="margin-right: 20px;"></span>
-                <button onclick="testConnection()" class="btn-primary" style="margin-right: 10px;">🧪 Test Connection</button>
-                <button onclick="logout()" class="btn-danger">Logout</button>
-            </div>
-        </div>
-
-        <div class="admin-nav">
-            <div class="nav-buttons">
-                <button class="nav-btn active" onclick="showSection('dashboard')">📊 Dashboard</button>
-                <button class="nav-btn" onclick="showSection('search')">🔍 Search Meetings</button>
-                <button class="nav-btn" onclick="showSection('recent')">📅 Recent Meetings</button>
-            </div>
-        </div>
-
-        <div class="admin-content">
-            <!-- Dashboard Section -->
-            <div id="dashboardSection" class="section active">
-                <h2 style="margin-bottom: 20px; color: #2d3436;">📊 Dashboard</h2>
-                <div class="stats-grid" id="statsGrid">
-                    <div class="stat-card">
-                        <div class="stat-number" id="totalMeetings">-</div>
-                        <div class="stat-label">Total Meetings</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="totalSize">-</div>
-                        <div class="stat-label">Total Size</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="activeSessions">-</div>
-                        <div class="stat-label">Active Sessions</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number" id="thisMonth">-</div>
-                        <div class="stat-label">This Month</div>
-                    </div>
-                </div>
-                <div id="monthlyChart" style="background: white; border-radius: 15px; padding: 20px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);">
-                    <h3 style="margin-bottom: 15px; color: #2d3436;">📈 Monthly Activity</h3>
-                    <div id="chartContainer"></div>
-                </div>
-            </div>
-
-            <!-- Search Section -->
-            <div id="searchSection" class="section">
-                <h2 style="margin-bottom: 20px; color: #2d3436;">🔍 Search Meetings</h2>
-                <div class="search-panel">
-                    <div class="search-form">
-                        <div class="form-group">
-                            <label for="searchTerm">Search Term</label>
-                            <input type="text" id="searchTerm" placeholder="Search in titles and content...">
-                        </div>
-                        <div class="form-group">
-                            <label for="dateFrom">From Date</label>
-                            <input type="date" id="dateFrom">
-                        </div>
-                        <div class="form-group">
-                            <label for="dateTo">To Date</label>
-                            <input type="date" id="dateTo">
-                        </div>
-                        <div class="form-group">
-                            <button type="button" class="btn-primary" onclick="searchMeetings()">🔍 Search</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="searchResults">
-                    <div class="loading" id="searchLoading" style="display: none;">
-                        <div class="spinner"></div>
-                        <p>Searching meetings...</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Meetings Section -->
-            <div id="recentSection" class="section">
-                <h2 style="margin-bottom: 20px; color: #2d3436;">📅 Recent Meetings</h2>
-                <div id="recentMeetings">
-                    <div class="loading" id="recentLoading">
-                        <div class="spinner"></div>
-                        <p>Loading recent meetings...</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Meeting Modal -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>✏️ Edit Meeting</h2>
-                <span class="close" onclick="closeEditModal()">&times;</span>
-            </div>
-            <form class="edit-form" id="editForm">
-                <div class="form-group">
-                    <label for="editTitle">Meeting Title</label>
-                    <input type="text" id="editTitle" required>
-                </div>
-                <div class="form-group">
-                    <label for="editDateTime">Date & Time</label>
-                    <input type="text" id="editDateTime" required>
-                </div>
-                <div class="form-group">
-                    <label for="editAttendees">Attendees (comma-separated)</label>
-                    <input type="text" id="editAttendees" required>
-                </div>
-                <div class="form-group">
-                    <label for="editNotes">Meeting Notes</label>
-                    <textarea id="editNotes" required></textarea>
-                </div>
-                <div style="display: flex; gap: 15px; justify-content: end;">
-                    <button type="button" class="btn-danger" onclick="closeEditModal()">Cancel</button>
-                    <button type="submit" class="btn-primary">💾 Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div id="deleteModal" class="modal">
-        <div class="modal-content" style="max-width: 400px;">
-            <div class="modal-header">
-                <h2>🗑️ Delete Meeting</h2>
-                <span class="close" onclick="closeDeleteModal()">&times;</span>
-            </div>
-            <p style="margin-bottom: 20px; color: #636e72;">Are you sure you want to delete this meeting? This action cannot be undone.</p>
-            <div style="display: flex; gap: 15px; justify-content: end;">
-                <button type="button" class="btn-primary" onclick="closeDeleteModal()">Cancel</button>
-                <button type="button" class="btn-danger" onclick="confirmDelete()">🗑️ Delete</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Configuration - Update with your STANDALONE Google Apps Script URL
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzVOBjlT9k9l_2kWXWgZ0IdRUOpaJhpjc2FWHRdC96iUyjNUykbV7i__OiwblDIe9Gm/exec';
-        
-        let sessionToken = null;
-        let currentEditingMeeting = null;
-        let currentDeletingMeeting = null;
-
-        // Login functionality
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Show loading state
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Logging in...';
-            submitBtn.disabled = true;
-            
-            // Clear previous messages
-            clearMessage('loginMessage');
-            
-            console.log('Attempting login with username:', username);
-            console.log('Script URL:', SCRIPT_URL);
-            
-            try {
-                // Check if SCRIPT_URL is configured
-                if (SCRIPT_URL.includes('YOUR_STANDALONE_ADMIN_SCRIPT_ID')) {
-                    throw new Error('Please update SCRIPT_URL with your actual Google Apps Script URL');
-                }
-                
-                const result = await makeRequest('login', { username, password });
-                console.log('Login response:', result);
-                
-                if (result.success) {
-                    sessionToken = result.data.sessionToken;
-                    document.getElementById('adminUsername').textContent = `Welcome, ${result.data.username}`;
-                    document.getElementById('loginContainer').style.display = 'none';
-                    document.getElementById('adminContainer').style.display = 'block';
-                    
-                    // Load dashboard data
-                    loadDashboard();
-                    loadRecentMeetings();
-                } else {
-                    showMessage('loginMessage', result.error || result.message || 'Login failed', 'error');
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                showMessage('loginMessage', 'Login failed: ' + error.message, 'error');
-            } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
-        });
-
-        // Logout functionality
-        async function logout() {
-            try {
-                if (sessionToken) {
-                    await makeRequest('adminLogout', { sessionToken });
-                }
-            } catch (error) {
-                console.error('Logout error:', error);
-            }
-            
-            sessionToken = null;
-            document.getElementById('loginContainer').style.display = 'block';
-            document.getElementById('adminContainer').style.display = 'none';
-            document.getElementById('loginForm').reset();
-            clearMessage('loginMessage');
-        }
-
-        // Section navigation
-        function showSection(sectionName) {
-            // Hide all sections
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            // Remove active class from all nav buttons
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show selected section
-            document.getElementById(sectionName + 'Section').classList.add('active');
-            
-            // Add active class to clicked button
-            event.target.classList.add('active');
-            
-            // Load section-specific data
-            if (sectionName === 'dashboard') {
-                loadDashboard();
-            } else if (sectionName === 'recent') {
-                loadRecentMeetings();
-            }
-        }
-
-        // Load dashboard statistics
-        async function loadDashboard() {
-            try {
-                const result = await makeRequest('getStats', { sessionToken });
-                
-                if (result.success) {
-                    const stats = result.data;
-                    
-                    document.getElementById('totalMeetings').textContent = stats.totalMeetings;
-                    document.getElementById('totalSize').textContent = formatFileSize(stats.totalSize);
-                    document.getElementById('activeSessions').textContent = stats.activeSessions;
-                    
-                    // Calculate this month's meetings
-                    const currentMonth = new Date().toISOString().substring(0, 7); // YYYY-MM
-                    const thisMonthStats = Object.entries(stats.monthlyStats || {})
-                        .find(([month]) => month.startsWith(currentMonth.substring(0, 4) + '-' + currentMonth.substring(5)));
-                    
-                    document.getElementById('thisMonth').textContent = thisMonthStats ? thisMonthStats[1].count : 0;
-                    
-                    // Create monthly chart
-                    createMonthlyChart(stats.monthlyStats || {});
-                } else {
-                    console.error('Failed to load stats:', result.message);
-                }
-            } catch (error) {
-                console.error('Dashboard load error:', error);
-            }
-        }
-
-        // Create monthly activity chart
-        function createMonthlyChart(monthlyStats) {
-            const chartContainer = document.getElementById('chartContainer');
-            const months = Object.keys(monthlyStats).sort();
-            
-            if (months.length === 0) {
-                chartContainer.innerHTML = '<p style="text-align: center; color: #636e72;">No data available</p>';
-                return;
-            }
-            
-            const maxCount = Math.max(...Object.values(monthlyStats).map(stat => stat.count));
-            
-            let chartHTML = '<div style="display: flex; align-items: end; gap: 10px; height: 200px; padding: 20px;">';
-            
-            months.forEach(month => {
-                const count = monthlyStats[month].count;
-                const height = (count / maxCount) * 150; // Max height 150px
-                const hue = Math.random() * 360; // Random color
-                
-                chartHTML += `
-                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
-                        <div style="
-                            width: 100%;
-                            height: ${height}px;
-                            background: linear-gradient(135deg, hsl(${hue}, 70%, 60%) 0%, hsl(${hue + 30}, 70%, 50%) 100%);
-                            border-radius: 8px 8px 0 0;
-                            margin-bottom: 10px;
-                            transition: transform 0.3s ease;
-                            cursor: pointer;
-                        " 
-                        onmouseover="this.style.transform='translateY(-5px)'"
-                        onmouseout="this.style.transform='translateY(0)'"
-                        title="${month}: ${count} meetings"></div>
-                        <div style="font-size: 12px; color: #636e72; text-align: center;">
-                            <div style="font-weight: bold;">${count}</div>
-                            <div>${month}</div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            chartHTML += '</div>';
-            chartContainer.innerHTML = chartHTML;
-        }
-
-        // Search meetings
-        async function searchMeetings() {
-            const searchTerm = document.getElementById('searchTerm').value;
-            const dateFrom = document.getElementById('dateFrom').value;
-            const dateTo = document.getElementById('dateTo').value;
-            
-            document.getElementById('searchLoading').style.display = 'block';
-            document.getElementById('searchResults').innerHTML = document.getElementById('searchLoading').outerHTML;
-            
-            try {
-                const result = await makeRequest('searchMeetings', {
-                    sessionToken,
-                    searchTerm,
-                    dateFrom,
-                    dateTo,
-                    limit: 50
-                });
-                
-                if (result.success) {
-                    displayMeetings(result.data.meetings, 'searchResults');
-                } else {
-                    document.getElementById('searchResults').innerHTML = 
-                        `<div class="error-message">Search failed: ${result.message}</div>`;
-                }
-            } catch (error) {
-                document.getElementById('searchResults').innerHTML = 
-                    `<div class="error-message">Search error: ${error.message}</div>`;
-            }
-        }
-
-        // Load recent meetings
-        async function loadRecentMeetings() {
-            document.getElementById('recentLoading').style.display = 'block';
-            
-            try {
-                const result = await makeRequest('searchMeetings', {
-                    sessionToken,
-                    searchTerm: '',
-                    limit: 20
-                });
-                
-                if (result.success) {
-                    displayMeetings(result.data.meetings, 'recentMeetings');
-                } else {
-                    document.getElementById('recentMeetings').innerHTML = 
-                        `<div class="error-message">Failed to load meetings: ${result.message}</div>`;
-                }
-            } catch (error) {
-                document.getElementById('recentMeetings').innerHTML = 
-                    `<div class="error-message">Load error: ${error.message}</div>`;
-            }
-        }
-
-        // Display meetings in table format
-        function displayMeetings(meetings, containerId) {
-            const container = document.getElementById(containerId);
-            
-            if (meetings.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #636e72; padding: 40px;">No meetings found</p>';
-                return;
-            }
-            
-            let tableHTML = `
-                <div class="meetings-table">
-                    <div class="table-header table-row">
-                        <div>Meeting Title</div>
-                        <div>Date & Time</div>
-                        <div>Attendees</div>
-                        <div>Created</div>
-                        <div>Actions</div>
-                    </div>
-            `;
-            
-            meetings.forEach(meeting => {
-                const attendeesList = Array.isArray(meeting.attendees) ? meeting.attendees.join(', ') : 'N/A';
-                const createdDate = new Date(meeting.created).toLocaleDateString();
-                
-                tableHTML += `
-                    <div class="table-row">
-                        <div>
-                            <div class="meeting-title">${escapeHtml(meeting.title)}</div>
-                            <div class="meeting-meta">${escapeHtml(meeting.fileName)}</div>
-                        </div>
-                        <div class="meeting-meta">${escapeHtml(meeting.dateTime)}</div>
-                        <div class="meeting-meta">${escapeHtml(attendeesList)}</div>
-                        <div class="meeting-meta">${createdDate}</div>
-                        <div class="meeting-actions">
-                            <button class="btn-edit" onclick="editMeeting('${meeting.id}')">✏️ Edit</button>
-                            <button class="btn-danger" onclick="deleteMeeting('${meeting.id}', '${escapeHtml(meeting.title)}')">🗑️ Delete</button>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            tableHTML += '</div>';
-            container.innerHTML = tableHTML;
-        }
-
-        // Edit meeting
-        async function editMeeting(meetingId) {
-            try {
-                const result = await makeRequest('getMeeting', { sessionToken, meetingId });
-                
-                if (result.success) {
-                    const meeting = result.data;
-                    currentEditingMeeting = meetingId;
-                    
-                    document.getElementById('editTitle').value = meeting.parsed.title;
-                    document.getElementById('editDateTime').value = meeting.parsed.dateTime;
-                    document.getElementById('editAttendees').value = meeting.parsed.attendees.join(', ');
-                    document.getElementById('editNotes').value = meeting.parsed.notes;
-                    
-                    document.getElementById('editModal').style.display = 'block';
-                } else {
-                    alert('Failed to load meeting: ' + result.message);
-                }
-            } catch (error) {
-                alert('Error loading meeting: ' + error.message);
-            }
-        }
-
-        // Save edited meeting
-        document.getElementById('editForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            if (!currentEditingMeeting) return;
-            
-            const title = document.getElementById('editTitle').value;
-            const dateTime = document.getElementById('editDateTime').value;
-            const attendees = document.getElementById('editAttendees').value.split(',').map(a => a.trim());
-            const notes = document.getElementById('editNotes').value;
-            
-            try {
-                const result = await makeRequest('updateMeeting', {
-                    sessionToken,
-                    meetingId: currentEditingMeeting,
-                    title,
-                    dateTime,
-                    attendees,
-                    notes
-                });
-                
-                if (result.success) {
-                    closeEditModal();
-                    // Refresh current view
-                    const activeSection = document.querySelector('.section.active').id;
-                    if (activeSection === 'searchSection') {
-                        searchMeetings();
-                    } else if (activeSection === 'recentSection') {
-                        loadRecentMeetings();
-                    }
-                    showMessage('adminContainer', 'Meeting updated successfully!', 'success');
-                } else {
-                    alert('Failed to update meeting: ' + result.message);
-                }
-            } catch (error) {
-                alert('Error updating meeting: ' + error.message);
-            }
-        });
-
-        // Delete meeting
-        function deleteMeeting(meetingId, meetingTitle) {
-            currentDeletingMeeting = meetingId;
-            document.querySelector('#deleteModal h2').textContent = `🗑️ Delete "${meetingTitle}"`;
-            document.getElementById('deleteModal').style.display = 'block';
-        }
-
-        // Confirm delete
-        async function confirmDelete() {
-            if (!currentDeletingMeeting) return;
-            
-            try {
-                const result = await makeRequest('deleteMeeting', {
-                    sessionToken,
-                    meetingId: currentDeletingMeeting
-                });
-                
-                if (result.success) {
-                    closeDeleteModal();
-                    // Refresh current view
-                    const activeSection = document.querySelector('.section.active').id;
-                    if (activeSection === 'searchSection') {
-                        searchMeetings();
-                    } else if (activeSection === 'recentSection') {
-                        loadRecentMeetings();
-                    }
-                    loadDashboard(); // Refresh stats
-                    showMessage('adminContainer', 'Meeting deleted successfully!', 'success');
-                } else {
-                    alert('Failed to delete meeting: ' + result.message);
-                }
-            } catch (error) {
-                alert('Error deleting meeting: ' + error.message);
-            }
-        }
-
-        // Modal controls
-        function closeEditModal() {
-            document.getElementById('editModal').style.display = 'none';
-            currentEditingMeeting = null;
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').style.display = 'none';
-            currentDeletingMeeting = null;
-        }
-
-        // Utility functions
-        async function makeRequest(action, data) {
-            console.log('Making request:', action, data);
-            
-            try {
-                const formData = new FormData();
-                formData.append('action', action);
-                formData.append('data', JSON.stringify(data));
-                
-                console.log('Sending to URL:', SCRIPT_URL);
-                
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                console.log('Response status:', response.status);
-                console.log('Response headers:', [...response.headers.entries()]);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
-                }
-                
-                const text = await response.text();
-                console.log('Raw response text:', text);
-                
-                // Check if response is HTML (error page)
-                if (text.trim().startsWith('<')) {
-                    console.error('Received HTML response instead of JSON:', text.substring(0, 200));
-                    throw new Error('Server returned HTML instead of JSON. Check your script URL and deployment settings.');
-                }
-                
-                try {
-                    const result = JSON.parse(text);
-                    console.log('Parsed JSON result:', result);
-                    return result;
-                } catch (parseError) {
-                    console.error('JSON parse error:', parseError);
-                    console.error('Response text:', text);
-                    throw new Error('Invalid JSON response from server: ' + text.substring(0, 100) + '...');
-                }
-                
-            } catch (fetchError) {
-                console.error('Fetch error:', fetchError);
-                throw new Error('Network error: ' + fetchError.message);
-            }
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 B';
-            const k = 1024;
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function showMessage(containerId, message, type) {
-            const container = document.getElementById(containerId);
-            const messageDiv = document.createElement('div');
-            messageDiv.className = type === 'error' ? 'error-message' : 'success-message';
-            messageDiv.textContent = message;
-            
-            if (containerId === 'loginMessage') {
-                container.innerHTML = '';
-                container.appendChild(messageDiv);
-            } else {
-                container.insertBefore(messageDiv, container.firstChild);
-            }
-            
-            setTimeout(() => {
-                messageDiv.remove();
-            }, 3000);
-        }
-
-        function clearMessage(containerId) {
-            document.getElementById(containerId).innerHTML = '';
-        }
-
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            const editModal = document.getElementById('editModal');
-            const deleteModal = document.getElementById('deleteModal');
-            
-            if (event.target === editModal) {
-                closeEditModal();
-            }
-            if (event.target === deleteModal) {
-                closeDeleteModal();
-            }
-        }
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeEditModal();
-                closeDeleteModal();
-            }
-        });
-
-        // Auto-refresh dashboard every 5 minutes
-        setInterval(() => {
-            if (sessionToken && document.querySelector('#dashboardSection.active')) {
-                loadDashboard();
-            }
-        }, 300000);
-
-        // Initialize debug info on page load
-        window.addEventListener('load', () => {
-            document.getElementById('debugScriptUrl').textContent = SCRIPT_URL;
-            document.getElementById('debugBrowser').textContent = navigator.userAgent;
-            
-            // Check if script URL is configured
-            if (SCRIPT_URL.includes('YOUR_STANDALONE_ADMIN_SCRIPT_ID')) {
-                document.getElementById('debugStatus').innerHTML = '<span style="color: red;">❌ Script URL not configured</span>';
-            } else {
-                document.getElementById('debugStatus').innerHTML = '<span style="color: green;">✅ Script URL configured</span>';
-            }
-        });
-    </script>
-</body>
-</html>
+        .stat-card p {
+            opacity: 0.9;
+            font-weight: 500;
