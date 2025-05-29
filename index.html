@@ -584,14 +584,14 @@
     <div id="loginContainer" class="login-container">
         <div class="login-box">
             <h1><i class="fas fa-shield-alt"></i> Admin Login</h1>
-            <form id="loginForm">
+            <form id="loginForm" onsubmit="return handleLogin(event);">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" required>
+                    <input type="text" id="username" required placeholder="Enter admin username">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" required>
+                    <input type="password" id="password" required placeholder="Enter admin password">
                 </div>
                 <button type="submit" class="btn-login">
                     <i class="fas fa-sign-in-alt"></i> Login
@@ -750,7 +750,7 @@
 
     <script>
         // Configuration - Replace with your Google Apps Script URL
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx0XUr7KL7nOQ-defN9o8yGZei1nh_lFqXW4eOVCBg1n9bWGFC1LJis0iWmocqnkPFW/exec;
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx0XUr7KL7nOQ-defN9o8yGZei1nh_lFqXW4eOVCBg1n9bWGFC1LJis0iWmocqnkPFW/exec';
         
         // Global variables
         let sessionToken = null;
@@ -760,6 +760,8 @@
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded');
+            
             // Check for existing session
             const savedToken = localStorage.getItem('adminSessionToken');
             if (savedToken) {
@@ -767,26 +769,59 @@
                 validateSession();
             }
 
-            // Setup event listeners
-            document.getElementById('loginForm').addEventListener('submit', handleLogin);
-            document.getElementById('editForm').addEventListener('submit', handleEditSave);
-            document.getElementById('searchInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    searchFiles();
+            // Setup event listeners with more robust handling
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    console.log('Form submit event triggered');
+                    handleLogin(e);
+                });
+                
+                // Also add click handler to the button as backup
+                const loginBtn = document.querySelector('.btn-login');
+                if (loginBtn) {
+                    loginBtn.addEventListener('click', function(e) {
+                        console.log('Button click event triggered');
+                        if (e.target.type === 'submit') {
+                            e.preventDefault();
+                            handleLogin(e);
+                        }
+                    });
                 }
-            });
+            }
+            
+            const editForm = document.getElementById('editForm');
+            if (editForm) {
+                editForm.addEventListener('submit', handleEditSave);
+            }
+            
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchFiles();
+                    }
+                });
+            }
+            
+            console.log('Event listeners set up');
         });
 
         // Authentication functions
         async function handleLogin(e) {
+            console.log('Login function called');
             e.preventDefault();
+            e.stopPropagation();
             
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
+            console.log('Username:', username);
+            console.log('Password length:', password ? password.length : 0);
+            
             if (!username || !password) {
                 showError('Please enter both username and password');
-                return;
+                return false;
             }
 
             const loginBtn = document.querySelector('.btn-login');
@@ -795,7 +830,9 @@
             loginBtn.disabled = true;
 
             try {
+                console.log('Making login request...');
                 const result = await makeRequest('adminLogin', { username, password });
+                console.log('Login result:', result);
                 
                 if (result.success) {
                     sessionToken = result.data.sessionToken;
@@ -807,11 +844,14 @@
                     showError(result.message || 'Login failed');
                 }
             } catch (error) {
+                console.error('Login error:', error);
                 showError('Login error: ' + error.message);
             } finally {
                 loginBtn.innerHTML = originalText;
                 loginBtn.disabled = false;
             }
+            
+            return false;
         }
 
         async function validateSession() {
@@ -1098,10 +1138,24 @@
             delete document.getElementById('editForm').dataset.fileId;
         }
 
-        // Utility functions
+        // Add a simple test function to verify JS is working
+        function testJS() {
+            console.log('JavaScript is working!');
+            alert('JavaScript is working! Click OK to continue.');
+        }
+
+        // Add debug info
+        console.log('Admin script loaded');
+        
+        // Test the makeRequest function with better error handling
         async function makeRequest(action, data) {
+            console.log('Making request:', action, data);
+            
             if (SCRIPT_URL.includes('YOUR_SCRIPT_ID')) {
-                throw new Error('Please update SCRIPT_URL with your actual Google Apps Script URL');
+                const errorMsg = 'Please update SCRIPT_URL with your actual Google Apps Script URL';
+                console.error(errorMsg);
+                showError(errorMsg);
+                throw new Error(errorMsg);
             }
 
             const formData = new FormData();
@@ -1111,19 +1165,29 @@
                 ...data
             }));
 
+            console.log('Request URL:', SCRIPT_URL);
+            console.log('Request data:', { action, sessionToken: sessionToken ? 'present' : 'missing', ...data });
+
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 body: formData
             });
+
+            console.log('Response status:', response.status);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const text = await response.text();
+            console.log('Raw response:', text);
+            
             try {
-                return JSON.parse(text);
+                const result = JSON.parse(text);
+                console.log('Parsed response:', result);
+                return result;
             } catch (e) {
+                console.error('JSON parse error:', e);
                 console.error('Raw response:', text);
                 throw new Error('Invalid JSON response from server');
             }
